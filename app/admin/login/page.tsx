@@ -1,0 +1,14 @@
+import type { Metadata } from "next";
+import { AdminLoginForm } from "@/components/admin/AdminLoginForm";
+
+export const metadata: Metadata = {
+  title: "Admin Login",
+};
+
+export default function AdminLoginPage() {
+  return (
+    <main className="nilambary-site admin-login-page">
+      <AdminLoginForm />
+    </main>
+  );
+}
