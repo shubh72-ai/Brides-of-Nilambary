@@ -77,7 +77,20 @@ export function BookingForm() {
     resolver: zodResolver(bookingSchema),
   });
 
-  const values = useWatch({ control });
+  const watchedValues = useWatch({ control });
+  const values = {
+    email: watchedValues.email ?? "",
+    eventDate: watchedValues.eventDate ?? "",
+    eventLocation: watchedValues.eventLocation ?? "",
+    eventTime: watchedValues.eventTime ?? timeSlots[1],
+    name: watchedValues.name ?? "",
+    notes: watchedValues.notes ?? "",
+    phone: watchedValues.phone ?? "",
+    referenceImages: (watchedValues.referenceImages ?? []).filter(
+      (image): image is string => typeof image === "string",
+    ),
+    service: watchedValues.service ?? serviceCatalog[0].title,
+  } satisfies BookingValues;
   const selectedServiceDetail = serviceCatalog.find(
     (service) => service.title === values.service,
   );
