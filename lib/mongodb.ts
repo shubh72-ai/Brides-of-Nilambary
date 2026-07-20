@@ -26,10 +26,20 @@ export async function connectMongo() {
 
   const { default: mongoose } = await import("mongoose");
 
-  cached.promise ??= mongoose.connect(uri, {
-    bufferCommands: false,
-  });
+  try {
+    cached.promise ??= mongoose.connect(uri, {
+      bufferCommands: false,
+    });
 
-  cached.conn = await cached.promise;
-  return cached.conn;
+    cached.conn = await cached.promise;
+    return cached.conn;
+  } catch (error) {
+    cached.conn = null;
+    cached.promise = null;
+    console.error(
+      "MongoDB connection is unavailable; continuing without persistence.",
+      error instanceof Error ? error.message : "Unknown connection error",
+    );
+    return null;
+  }
 }

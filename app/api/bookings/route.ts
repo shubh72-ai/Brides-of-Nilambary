@@ -12,8 +12,12 @@ const bookingSchema = z.object({
   notes: z.string().optional(),
   phone: z.string().min(8),
   referenceImages: z.array(z.string()).optional(),
-  service: z.string().min(2),
+  service: z.string().min(2).optional(),
+  services: z.array(z.string().min(2)).min(1).optional(),
   slot: z.string().optional(),
+}).refine((values) => Boolean(values.service || values.services?.length), {
+  message: "Choose at least one service.",
+  path: ["services"],
 });
 
 async function requestPayload(request: Request) {
@@ -33,6 +37,7 @@ async function requestPayload(request: Request) {
     notes: form.get("notes")?.toString() ?? "",
     phone: form.get("phone")?.toString() ?? "",
     service: form.get("service")?.toString() ?? "",
+    services: form.getAll("services").map((service) => service.toString()),
     slot: form.get("slot")?.toString() ?? "",
   };
 }
@@ -42,13 +47,19 @@ export async function POST(request: Request) {
 
   if (!parsed.success) {
     return Response.json(
-      { error: "Name, phone, service, wedding date, and appointment time are required." },
+      { error: "Name, phone, at least one service, wedding date, and appointment time are required." },
       { status: 400 },
     );
   }
 
   const values = parsed.data;
   const eventTime = values.eventTime || values.slot || "";
+  const services = values.services?.length
+    ? values.services
+    : values.service
+      ? [values.service]
+      : [];
+  const service = services.join(", ");
   const reference = createBookingReference();
   const connection = await connectMongo();
 
@@ -65,7 +76,8 @@ export async function POST(request: Request) {
       paymentStatus: "pending",
       phone: values.phone,
       referenceImages: values.referenceImages ?? [],
-      service: values.service,
+      service,
+      services,
     });
 
     return Response.json({

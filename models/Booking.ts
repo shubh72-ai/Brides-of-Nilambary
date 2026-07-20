@@ -24,6 +24,7 @@ const BookingSchema = new Schema(
     razorpayPaymentId: { trim: true, type: String },
     referenceImages: [{ type: String }],
     service: { required: true, trim: true, type: String },
+    services: [{ trim: true, type: String }],
   },
   { timestamps: true },
 );

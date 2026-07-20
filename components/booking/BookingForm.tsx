@@ -19,14 +19,14 @@ const bookingSchema = z.object({
   notes: z.string().optional(),
   phone: z.string().min(8, "Enter a reachable phone number"),
   referenceImages: z.array(z.string()).optional(),
-  service: z.string().min(2, "Choose a service"),
+  services: z.array(z.string()).min(1, "Choose at least one service"),
 });
 
 type BookingValues = z.infer<typeof bookingSchema>;
 
 const bookingSteps = [
   { label: "Date", title: "Select date" },
-  { label: "Service", title: "Select service" },
+  { label: "Services", title: "Select services" },
   { label: "Details", title: "Bride details" },
   { label: "Review", title: "Review booking" },
   { label: "Deposit", title: "Pay deposit" },
@@ -34,7 +34,7 @@ const bookingSteps = [
 
 const validationFields: Record<number, Array<keyof BookingValues>> = {
   1: ["eventDate", "eventTime"],
-  2: ["service"],
+  2: ["services"],
   3: ["name", "phone", "email", "eventLocation"],
 };
 
@@ -48,6 +48,33 @@ function formatBookingDate(value: string) {
         month: "long",
         year: "numeric",
       }).format(date);
+}
+
+type BookingApiResponse = {
+  bookingId?: string;
+  checkoutUrl?: string;
+  error?: string;
+  status?: string;
+};
+
+type PaymentOrderApiResponse = {
+  configured?: boolean;
+  error?: string;
+  keyId?: string;
+  order?: { amount: number; id: string } | null;
+};
+
+async function readApiResponse<T>(response: Response, fallbackMessage: string) {
+  const payload = await response.text();
+  if (!payload.trim()) {
+    throw new Error(fallbackMessage);
+  }
+
+  try {
+    return JSON.parse(payload) as T;
+  } catch {
+    throw new Error(fallbackMessage);
+  }
 }
 
 export function BookingForm() {
@@ -72,7 +99,7 @@ export function BookingForm() {
       notes: "",
       phone: "",
       referenceImages: [],
-      service: serviceCatalog[0].title,
+      services: [],
     },
     resolver: zodResolver(bookingSchema),
   });
@@ -89,10 +116,12 @@ export function BookingForm() {
     referenceImages: (watchedValues.referenceImages ?? []).filter(
       (image): image is string => typeof image === "string",
     ),
-    service: watchedValues.service ?? serviceCatalog[0].title,
+    services: (watchedValues.services ?? []).filter(
+      (service): service is string => typeof service === "string",
+    ),
   } satisfies BookingValues;
-  const selectedServiceDetail = serviceCatalog.find(
-    (service) => service.title === values.service,
+  const selectedServiceDetails = serviceCatalog.filter(
+    (service) => values.services.includes(service.title),
   );
 
   async function advanceStep() {
@@ -114,35 +143,59 @@ export function BookingForm() {
 
     try {
       const bookingResponse = await fetch("/api/bookings", {
-        body: JSON.stringify(valuesToSubmit),
+        body: JSON.stringify({
+          ...valuesToSubmit,
+          service: valuesToSubmit.services.join(", "),
+        }),
         headers: { "Content-Type": "application/json" },
         method: "POST",
       });
 
+      const booking = await readApiResponse<BookingApiResponse>(
+        bookingResponse,
+        "The booking service did not return a valid response. Please try again.",
+      );
+
       if (!bookingResponse.ok) {
-        const detail = await bookingResponse.json();
-        throw new Error(detail.error || "Booking could not be captured.");
+        throw new Error(booking.error || "Booking could not be captured.");
       }
 
-      const booking = await bookingResponse.json();
+      if (!booking.bookingId) {
+        throw new Error("The booking service did not return a booking reference.");
+      }
+
+      if (booking.status === "preview") {
+        window.location.assign(
+          booking.checkoutUrl ??
+            `/booking-success?booking=${encodeURIComponent(booking.bookingId)}&preview=1`,
+        );
+        return;
+      }
+
       const orderResponse = await fetch("/api/payments/create-order", {
         body: JSON.stringify({ bookingId: booking.bookingId }),
         headers: { "Content-Type": "application/json" },
         method: "POST",
       });
 
-      if (!orderResponse.ok) {
-        const detail = await orderResponse.json();
-        throw new Error(detail.error || "Payment order could not be created.");
-      }
+      const order = await readApiResponse<PaymentOrderApiResponse>(
+        orderResponse,
+        "The payment service did not return a valid response. Please try again.",
+      );
 
-      const order = await orderResponse.json();
+      if (!orderResponse.ok) {
+        throw new Error(order.error || "Payment order could not be created.");
+      }
 
       if (!order.configured || !order.order) {
         window.location.assign(
           `/booking-success?booking=${encodeURIComponent(booking.bookingId)}&preview=1`,
         );
         return;
+      }
+
+      if (!order.keyId) {
+        throw new Error("Payment checkout is not fully configured. Please contact the studio.");
       }
 
       setStatus("ready");
@@ -225,12 +278,12 @@ export function BookingForm() {
               <p>Each service can be refined with draping, jewellery, hair, and timeline details during consultation.</p>
             </div>
             <ServiceSelector
-              onChange={(value) =>
-                setValue("service", value, { shouldDirty: true, shouldValidate: true })
+              onChange={(selectedServices) =>
+                setValue("services", selectedServices, { shouldDirty: true, shouldValidate: true })
               }
-              value={values.service}
+              values={values.services}
             />
-            {errors.service ? <small className="form-error">{errors.service.message}</small> : null}
+            {errors.services ? <small className="form-error">{errors.services.message}</small> : null}
           </section>
         ) : null}
 
@@ -301,7 +354,7 @@ export function BookingForm() {
               <div><dt>Bride</dt><dd>{values.name}</dd></div>
               <div><dt>Date</dt><dd>{formatBookingDate(values.eventDate)}</dd></div>
               <div><dt>Time</dt><dd>{values.eventTime}</dd></div>
-              <div><dt>Service</dt><dd>{values.service}</dd></div>
+              <div><dt>Services</dt><dd>{values.services.join(", ")}</dd></div>
               <div><dt>Location</dt><dd>{values.eventLocation}</dd></div>
               <div><dt>Contact</dt><dd>{values.phone}</dd></div>
             </dl>
@@ -319,7 +372,11 @@ export function BookingForm() {
             <div className="booking-deposit-summary">
               <span>Booking deposit</span>
               <strong>{formatInr(brand.depositAmount)}</strong>
-              <small>{selectedServiceDetail?.title ?? values.service}</small>
+              <small>
+                {selectedServiceDetails.length
+                  ? selectedServiceDetails.map((service) => service.title).join(" • ")
+                  : "No services selected"}
+              </small>
             </div>
             <p className="booking-trust">Your booking is confirmed after successful Razorpay deposit verification.</p>
           </section>

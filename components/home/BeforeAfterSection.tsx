@@ -10,7 +10,7 @@ const beforeAfterImageConfig = {
   beforeLabel: "Natural Base",
   afterLabel: "Bridal Finish",
   beforeScale: 0.76,
-  afterScale: 1,
+  afterScale: 0.92,
   beforeTranslateX: 1.5,
   afterTranslateX: 0,
   beforeTranslateY: 0,
