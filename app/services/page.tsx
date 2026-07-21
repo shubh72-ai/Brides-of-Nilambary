@@ -31,11 +31,11 @@ export default function ServicesPage() {
             <span>{String(index + 1).padStart(2, "0")}</span>
             <Image
               alt={service.title}
-              height={900}
+              height={1152}
               loading="lazy"
               sizes="(max-width: 900px) 92vw, 38vw"
               src={service.image}
-              width={720}
+              width={2048}
             />
             <div>
               <small>{service.category}</small>

@@ -4,21 +4,25 @@ import { motion, useReducedMotion } from "framer-motion";
 import Image from "next/image";
 import Link from "next/link";
 import type { MouseEvent } from "react";
+import { galleryData } from "@/src/lib/gallery-data";
+
+const jewelleryStudy = galleryData[12];
+const makeupStudy = galleryData[1];
 
 const entryCards = [
   {
-    eyebrow: "Jewellery / ornament",
+    eyebrow: jewelleryStudy.category,
     href: "#gallery-grid",
-    image: "/gallery/image-7.webp",
-    imageAlt: "Detailed bridal eye, bindi, and jewellery styling",
-    title: "Explore Style Details",
+    image: jewelleryStudy.image16x9,
+    imageAlt: jewelleryStudy.altText,
+    title: jewelleryStudy.displayName,
   },
   {
-    eyebrow: "Face / eye / finish",
+    eyebrow: makeupStudy.category,
     href: "#immersive-stage",
-    image: "/gallery/image-3.webp",
-    imageAlt: "Close bridal eye makeup profile",
-    title: "Explore Makeup Profile",
+    image: makeupStudy.image16x9,
+    imageAlt: makeupStudy.altText,
+    title: makeupStudy.displayName,
   },
 ] as const;
 

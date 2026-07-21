@@ -3,7 +3,7 @@
 import Image from "next/image";
 import type { CSSProperties, PointerEvent } from "react";
 import { useEffect, useMemo, useState } from "react";
-import { galleryImages } from "@/lib/constants";
+import { galleryData } from "@/src/lib/gallery-data";
 
 type DragState = {
   rotation: number;
@@ -13,7 +13,10 @@ type DragState = {
 const mobileGalleryQuery = "(max-width: 900px)";
 
 export default function ImmersiveGallery() {
-  const cards = useMemo(() => galleryImages.slice(0, 14), []);
+  const cards = useMemo(
+    () => [...galleryData].sort((left, right) => left.sortOrder - right.sortOrder),
+    [],
+  );
   const [rotation, setRotation] = useState(0);
   const [dragStart, setDragStart] = useState<DragState | null>(null);
   const [isMobile, setIsMobile] = useState(
@@ -105,20 +108,20 @@ export default function ImmersiveGallery() {
             return (
               <figure
                 className="cylinder-card"
-                key={item.imageUrl}
+                key={item.slug}
                 style={{ "--card-angle": `${angle}deg` } as CSSProperties}
               >
                 <Image
-                  alt={`${item.title} by Brides of Nilambary`}
-                  height={800}
+                  alt={item.altText}
+                  height={1152}
                   loading="lazy"
-                  sizes="22vw"
-                  src={item.imageUrl}
-                  width={600}
+                  sizes="(max-width: 1200px) 35vw, 470px"
+                  src={item.image16x9}
+                  width={2048}
                 />
                 <figcaption>
                   <span>{item.category}</span>
-                  <strong>{item.title}</strong>
+                  <strong>{item.displayName}</strong>
                   <small>{item.tag}</small>
                 </figcaption>
               </figure>

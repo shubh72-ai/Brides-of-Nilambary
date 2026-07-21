@@ -1,3 +1,5 @@
+import { galleryData } from "@/src/lib/gallery-data";
+
 const configuredDepositAmount = Number(process.env.NEXT_PUBLIC_BOOKING_DEPOSIT_AMOUNT);
 
 export const brand = {
@@ -39,17 +41,17 @@ export const serviceCatalog = [
     category: "Hair",
     price: 7500,
     duration: "1.5 hr",
-    image: "/frames/frame_0196.webp",
+    image: "/services/16x9/03-bridal-hairstyling.jpg",
     description:
       "Elegant bridal buns, floral gajra styling, soft curls, accessories, and camera-ready finishing for the complete wedding look.",
   },
   {
-    title: "HD Bridal Makeup",
-    slug: "hd-bridal-makeup",
+    title: "Premium Bridal Makeup",
+    slug: "premium-bridal-makeup",
     category: "Makeup",
     price: 35000,
     duration: "4 hr",
-    image: "/frames/frame_0036.webp",
+    image: "/services/16x9/01-premium-bridal-makeup.jpg",
     description:
       "Camera-ready skin, sculpted eyes, long-wear finish, and veil-safe touch-up planning for the wedding morning.",
   },
@@ -99,7 +101,7 @@ export const serviceCatalog = [
     category: "Styling",
     price: 8500,
     duration: "1 hr",
-    image: "/frames/frame_0276.webp",
+    image: "/services/16x9/02-saree-draping-binding.jpg",
     description:
       "Clean pleats, pre-pleated box folding, ritual-ready structure, veil setting, and movement-tested drapes for ceremonies and portraits.",
   },
@@ -125,120 +127,19 @@ export const serviceCatalog = [
   },
 ];
 
-export const galleryImages = [
-  {
-    title: "Natural Base",
-    category: "Natural Base",
-    tag: "Skin prep",
-    imageUrl: "/gallery/image-1.webp",
-    featured: true,
-    beforeAfterType: "before",
-  },
-  {
-    title: "Saree Draping",
-    category: "Saree Styling",
-    tag: "Pleat architecture",
-    imageUrl: "/gallery/image-2.webp",
-    featured: true,
-    beforeAfterType: "detail",
-  },
-  {
-    title: "Maharashtrian Bridal",
-    category: "Maharashtrian Bridal",
-    tag: "Royal red ceremony",
-    imageUrl: "/gallery/image-3.webp",
-    featured: true,
-    beforeAfterType: "after",
-  },
-  {
-    title: "Full Bridal Transformation",
-    category: "Final Look",
-    tag: "Complete look",
-    imageUrl: "/gallery/image-4.webp",
-    featured: true,
-    beforeAfterType: "after",
-  },
-  {
-    title: "Eye Detail",
-    category: "Eye Details",
-    tag: "Soft sculpt",
-    imageUrl: "/gallery/image-5.webp",
-    featured: false,
-    beforeAfterType: "detail",
-  },
-  {
-    title: "Final Look",
-    category: "Final Look",
-    tag: "Signature finish",
-    imageUrl: "/gallery/image-6.webp",
-    featured: false,
-    beforeAfterType: "after",
-  },
-  {
-    title: "Temple-Gold Styling",
-    category: "Maharashtrian Bridal",
-    tag: "Gold balance",
-    imageUrl: "/gallery/image-7.webp",
-    featured: false,
-    beforeAfterType: "detail",
-  },
-  {
-    title: "Reception Glow",
-    category: "Makeup Process",
-    tag: "Evening polish",
-    imageUrl: "/gallery/image-8.webp",
-    featured: false,
-    beforeAfterType: "after",
-  },
-  {
-    title: "Soft Rose Nikaah Glow",
-    category: "Makeup Process",
-    tag: "Blush skin finish",
-    imageUrl: "/gallery/image-9.webp",
-    featured: false,
-    beforeAfterType: "after",
-  },
-  {
-    title: "Emerald Jewellery Styling",
-    category: "Final Look",
-    tag: "Deep jewel contrast",
-    imageUrl: "/gallery/image-10.webp",
-    featured: false,
-    beforeAfterType: "detail",
-  },
-  {
-    title: "Ivory Veil Finish",
-    category: "Saree Styling",
-    tag: "Soft veil placement",
-    imageUrl: "/gallery/image-11.webp",
-    featured: false,
-    beforeAfterType: "detail",
-  },
-  {
-    title: "Muted Mehendi Elegance",
-    category: "Bridal Hairstyling",
-    tag: "Warm pre-wedding tone",
-    imageUrl: "/gallery/image-12.webp",
-    featured: false,
-    beforeAfterType: "after",
-  },
-  {
-    title: "Signature Bridal Finish",
-    category: "Final Look",
-    tag: "Final bridal polish",
-    imageUrl: "/gallery/image-13.webp",
-    featured: false,
-    beforeAfterType: "after",
-  },
-  {
-    title: "Rich Red Ceremony Look",
-    category: "Maharashtrian Bridal",
-    tag: "Classic Indian bridal",
-    imageUrl: "/gallery/image-14.webp",
-    featured: true,
-    beforeAfterType: "after",
-  },
-];
+export const galleryImages = galleryData.map((item) => ({
+  title: item.displayName,
+  category: item.category,
+  tag: item.tag,
+  imageUrl: item.image16x9,
+  featured: item.featured,
+  beforeAfterType:
+    item.slug === "natural-base"
+      ? "before"
+      : item.category === "Final Look" || item.category === "Maharashtrian Bridal"
+        ? "after"
+        : "detail",
+}));
 
 export const timeSlots = ["6:00 AM", "8:30 AM", "11:00 AM", "2:30 PM", "5:00 PM"];
 

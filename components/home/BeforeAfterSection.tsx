@@ -5,16 +5,16 @@ import Image from "next/image";
 import { BeforeAfterSlider } from "@/components/ui/BeforeAfterSlider";
 
 const beforeAfterImageConfig = {
-  beforeImage: "/frames/frame_0001.webp",
-  afterImage: "/frames/frame_0240.webp",
+  beforeImage: "/transformations/natural-base-before.jpg",
+  afterImage: "/transformations/bridal-finish-after.jpg",
   beforeLabel: "Natural Base",
   afterLabel: "Bridal Finish",
-  beforeScale: 0.76,
-  afterScale: 0.92,
-  beforeTranslateX: 1.5,
+  beforeScale: 1,
+  afterScale: 1,
+  beforeTranslateX: 0,
   afterTranslateX: 0,
   beforeTranslateY: 0,
-  afterTranslateY: 5,
+  afterTranslateY: 0,
   beforeObjectPosition: "center center",
   afterObjectPosition: "center center",
 };
@@ -66,7 +66,7 @@ export function BeforeAfterSection() {
               alt="Maharashtrian bridal transformation preview"
               fill
               sizes="(max-width: 980px) 42vw, 220px"
-              src="/gallery/image-14.webp"
+              src="/gallery/16x9/08-maharashtrian-bridal.jpg"
             />
             <figcaption>
               <span>Signature study</span>

@@ -5,8 +5,17 @@
 import { useState } from "react";
 import { galleryImages } from "@/lib/constants";
 
+type GalleryPreviewItem = {
+  beforeAfterType: string;
+  category: string;
+  featured: boolean;
+  imageUrl: string;
+  tag: string;
+  title: string;
+};
+
 export function GalleryManager() {
-  const [items, setItems] = useState(galleryImages);
+  const [items, setItems] = useState<GalleryPreviewItem[]>(galleryImages);
 
   function addItem(formData: FormData) {
     const title = formData.get("title")?.toString() || "Untitled bridal look";

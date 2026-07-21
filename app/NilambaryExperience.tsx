@@ -7,107 +7,31 @@ import { BeforeAfterSection } from "@/components/home/BeforeAfterSection";
 import { HeroSection } from "@/components/home/HeroSection";
 import { contact } from "@/lib/constants";
 import { whatsappLink } from "@/lib/utils";
+import { galleryData } from "@/src/lib/gallery-data";
+import { servicesData } from "@/src/lib/services-data";
 
-const services = [
-  {
-    title: "Premium Bridal Makeup",
-    price: "From Rs. 35,000",
-    image: "/frames/frame_0036.webp",
-    detail:
-      "Skin-first glam, sculpted eyes, luminous complexion work, and long-wear finishing for ceremony-to-reception days.",
-  },
-  {
-    title: "Saree Draping & Binding",
-    price: "From Rs. 8,500",
-    image: "/frames/frame_0112.webp",
-    detail:
-      "Clean pleats, secure bridal binding, veil setting, and movement-tested drapes for rituals and portraits.",
-  },
-  {
-    title: "Bridal Hairstyling",
-    price: "From Rs. 7,500",
-    image: "/frames/frame_0196.webp",
-    detail:
-      "Elegant buns, soft curls, gajra placement, hair accessories, and camera-ready finishing for the complete bridal silhouette.",
-  },
-  {
-    title: "Custom Bridal Look Design",
-    price: "Consultation led",
-    image: "/frames/frame_0288.webp",
-    detail:
-      "Look direction, fabric coordination, jewellery pairing, and full transformation planning for your wedding story.",
-  },
-];
+const services = servicesData.map((service) => ({
+  title: service.title,
+  price: service.price,
+  image: service.image16x9,
+  alt: service.alt,
+  detail: service.description,
+}));
 
-const gallery = [
-  { image: "/frames/frame_0001.webp", label: "Soft rose nikaah glow" },
-  { image: "/frames/frame_0048.webp", label: "Temple-gold reception glam" },
-  { image: "/frames/frame_0096.webp", label: "Emerald jewellery styling" },
-  { image: "/frames/frame_0144.webp", label: "Ivory veil finish" },
-  { image: "/frames/frame_0192.webp", label: "Sculpted bridal eye" },
-  { image: "/frames/frame_0240.webp", label: "Rich red ceremony look" },
-  { image: "/frames/frame_0288.webp", label: "Champagne shimmer skin" },
-  { image: "/frames/frame_0336.webp", label: "Saree drape portrait" },
-  { image: "/frames/frame_0384.webp", label: "Muted mehendi elegance" },
-  { image: "/frames/frame_0432.webp", label: "Signature bridal finish" },
-];
+const gallery = galleryData.map((item) => ({
+  image: item.image16x9,
+  label: item.displayName,
+  alt: item.altText,
+}));
 
-const portfolioGallery = [
-  {
-    image: "/frames/frame_0012.webp",
-    label: "Pre-ceremony skin prep",
-    category: "Makeup",
-    mood: "Soft blush finish",
-  },
-  {
-    image: "/frames/frame_0068.webp",
-    label: "Gold jewellery balance",
-    category: "Styling",
-    mood: "Temple-gold glow",
-  },
-  {
-    image: "/frames/frame_0124.webp",
-    label: "Saree pleat architecture",
-    category: "Draping",
-    mood: "Secure ritual drape",
-  },
-  {
-    image: "/frames/frame_0176.webp",
-    label: "Reception contour",
-    category: "Makeup",
-    mood: "Sculpted evening glam",
-  },
-  {
-    image: "/frames/frame_0228.webp",
-    label: "Veil and neckline setting",
-    category: "Styling",
-    mood: "Ivory bridal softness",
-  },
-  {
-    image: "/frames/frame_0276.webp",
-    label: "Rich red ceremony look",
-    category: "Bridal",
-    mood: "Classic Indian luxury",
-  },
-  {
-    image: "/frames/frame_0332.webp",
-    label: "Emerald jewellery styling",
-    category: "Styling",
-    mood: "Deep jewel contrast",
-  },
-  {
-    image: "/frames/frame_0388.webp",
-    label: "Blouse fit finishing",
-    category: "Alteration",
-    mood: "Camera-ready tailoring",
-  },
-  {
-    image: "/frames/frame_0448.webp",
-    label: "Final portrait polish",
-    category: "Bridal",
-    mood: "Brides of Nilambary signature",
-  },
-];
+const portfolioGallery = galleryData.map((item) => ({
+  image: item.image16x9,
+  portraitImage: item.image9x16,
+  label: item.displayName,
+  category: item.category,
+  mood: item.tag,
+  alt: item.altText,
+}));
 
 const testimonials = [
   {
@@ -209,12 +133,12 @@ function ServiceSection() {
           <article className="service-card" key={service.title}>
             <div className="service-image">
               <Image
-                alt={service.title}
-                height={900}
+                alt={service.alt}
+                height={1152}
                 loading="lazy"
                 sizes="(max-width: 720px) 88vw, 24vw"
                 src={service.image}
-                width={720}
+                width={2048}
               />
             </div>
             <div className="service-content">
@@ -334,12 +258,12 @@ function SphereGallery() {
                   }}
                 >
                   <Image
-                    alt={item.label}
-                    height={720}
+                    alt={item.alt}
+                    height={1152}
                     loading="lazy"
                     sizes="(max-width: 900px) 42vw, 18vw"
                     src={item.image}
-                    width={560}
+                    width={2048}
                   />
                   <figcaption>{item.label}</figcaption>
                 </figure>
@@ -367,12 +291,12 @@ function SphereGallery() {
               type="button"
             >
               <Image
-                alt={item.label}
-                height={900}
+                alt={item.alt}
+                height={1152}
                 loading="lazy"
                 sizes="(max-width: 720px) 92vw, 34vw"
                 src={item.image}
-                width={720}
+                width={2048}
               />
               <span className="gallery-tile-copy">
                 <span>{item.category}</span>
@@ -399,11 +323,11 @@ function SphereGallery() {
             Close
           </button>
           <Image
-            alt={selectedImage.label}
-            height={1500}
+            alt={selectedImage.alt}
+            height={2048}
             sizes="(max-width: 720px) 96vw, 70vw"
-            src={selectedImage.image}
-            width={1200}
+            src={selectedImage.portraitImage}
+            width={1152}
           />
           <div className="lightbox-caption glass-panel">
             <span>{selectedImage.category}</span>
@@ -417,7 +341,7 @@ function SphereGallery() {
 }
 
 function BookingSection() {
-  const [selectedService, setSelectedService] = useState(services[0].title);
+  const [selectedService, setSelectedService] = useState<string>(services[0].title);
   const [slot, setSlot] = useState(timeSlots[1]);
   const [confirmation, setConfirmation] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
@@ -568,10 +492,17 @@ function Testimonials() {
         <div className="section-kicker">Bride notes</div>
         <h2>Loved by Brides, Remembered in Frames</h2>
         <p>Real bridal experiences shaped with patience, precision, and emotional detail.</p>
+        <div className="testimonial-proof" aria-label="More than 400 happy customers">
+          <strong>400+</strong>
+          <span>happy customers who loved their makeup by Aiswarya</span>
+        </div>
       </div>
       <div className="testimonial-grid">
         {testimonials.map((item) => (
           <figure className="testimonial-card" key={item.name}>
+            <div className="testimonial-rating" aria-label="5 out of 5 stars" role="img">
+              <span aria-hidden="true">★★★★★</span>
+            </div>
             <blockquote>{item.quote}</blockquote>
             <figcaption>
               <strong>{item.name}</strong>
